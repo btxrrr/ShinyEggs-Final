@@ -1,0 +1,24 @@
+﻿@{
+    ViewData["Title"] = "Checkout";
+    Layout = "_Layout";
+}
+
+<div class="container">
+    <h2 class="mt-4">Checkout</h2>
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h4 class="mb-3">Payment Details</h4>
+                    <!-- Replace the form with a link to the Stripe Payment Link URL -->
+                    <a href="https://buy.stripe.com/test_bIYfZHcfxfiS8Ni6oo?success_url=http://localhost:7227/payment-success" class="btn btn-primary">Proceed to Payment</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="payment-confirmation" style="display: none; background-color: #f0f0f0; padding: 10px; border-radius: 5px;">
+        <h4 style="margin-bottom: 10px;">Payment Successful</h4>
+        <p>Your payment was successfully processed. Your order has been placed and a confirmation email will be sent to you shortly. Your order number is: <span id="order-number"></span></p>
+    </div>
+</div>
