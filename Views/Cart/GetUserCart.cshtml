@@ -1,0 +1,59 @@
+﻿@model ShoppingCart
+@{
+    ViewData["Title"] = "GetUserCart";
+}
+
+<div style="width:90%;margin:auto" class="mt-5">
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+    {
+            <h3>My Cart</h3>
+
+            <table class="table table-striped">
+                <tr>
+                    <th>Product</th>
+                    <th>Image</th>
+                    <th>Category</th>
+                    <th>Unit Price(SGD)</th>
+                    <th>Total Price</th>
+                    <th>Action</th>
+                </tr>
+            @foreach (var item in Model.CartDetails)
+            {
+                        <tr>
+                            <td>@item.Products.ProductName</td>
+                            <td>
+                        @if (string.IsNullOrEmpty(item.Products.Image))
+                        {
+                                        <img src="/images/blank.jpg" style="width:100px;height:100px" />
+                        }
+                        else
+                        {
+                                        <img src="/images/@item.Products.Image" style="width:100px;height:100px" />
+                        }
+                            </td>
+                            <td>@item.Products.Categories.CategoryName</td>
+                            <td>@item.Products.Price X @item.Quantity</td>
+                            <td>@(item.Products.Price * item.Quantity)</td>
+                            <td>
+                                <a class="btn btn-light" href="/Cart/AddItem?productId=@item.ProductId&&redirect=1">+</a>
+                                <a class="btn btn-light" href="/cart/RemoveItem?productid=@item.ProductId">-</a>
+                            </td>
+                        </tr>
+            }
+            </table>
+
+            <div class="my-2">
+                <h5>Total(SGD): </h5> 
+                @(Model.CartDetails.Select(item => item.Products.Price * item.Quantity).Sum())
+            </div>
+
+            <div class="my-2">
+                <a class="btn btn-primary" href="/Payment/Checkout">Checkout</a>
+            </div>
+
+    }
+    else
+    {
+            <h5>Cart is empty</h5>
+    }
+</div>

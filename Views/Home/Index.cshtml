@@ -1,0 +1,185 @@
+﻿@model ProductDisplayModel
+@{
+	ViewData["Title"] = "Home Page";
+
+}
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+
+<!-- Category Search & Filter --!>
+
+<div>
+	<form asp-action="Index" class="row row-cols-lg-auto g-3 align-items-center my-3">
+
+ <div class="col-3">
+	<label class="visually-hidden" for="categoryId">Categories</label>
+	<select class="form-select" id="categoryId" name="categoryId">
+	  <option selected>Categories...</option>
+				@foreach (var category in Model.Category)
+				{
+				//<option value="@category.Id">@category.CategoryName</option>
+											<option selected="@(category.Id == Model.CategoryId)" value="@category.Id">@category.CategoryName</option>
+				}
+	</select>
+ </div>
+
+  <div class="col-lg-6">
+	<label class="visually-hidden" for="">Enter keywords...</label>
+	<div class="input-group">
+	  <div class="input-group-text"></div>
+	  <input type="text" class="form-control" value="@Model.STerm" id="sterm" name="sterm" placeholder="Enter keywords...">
+	</div>
+  </div>
+
+  <div class="col-3">
+	<button type="submit" class="btn btn-dark">Search</button>
+	<a href="/Home/Index" class="btn btn-light">Reset</a>
+  </div>
+</form>
+</div>
+
+<!--- Product Carousel ---!>
+<div id="carouselExampleDark" class="carousel carousel-dark slide mt-4">
+  <div class="carousel-indicators">
+	<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+	<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+	<button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+	<div class="carousel-item active" data-bs-interval="3000">
+	  <img src="/images/Special Collection Gadget and Electronic Banner.png" class="d-block w-100" alt="...">
+	  <div class="carousel-caption d-none d-md-block">
+	  </div>
+	</div>
+	<div class="carousel-item" data-bs-interval="5000">
+	  <img src="/images/ShinyEggs Electronics.png" class="d-block w-100" alt="...">
+	  <div class="carousel-caption d-none d-md-block">
+	  </div>
+	</div>
+	<div class="carousel-item" data-bs-interval="5000">
+	  <img src="/images/blue gradient electronic sales promotion banner.png" class="d-block w-100" alt="...">
+	  <div class="carousel-caption d-none d-md-block">
+	  </div>
+	</div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+	<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	<span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+	<span class="carousel-control-next-icon" aria-hidden="true"></span>
+	<span class="visually-hidden">Next</span>
+  </button>
+</div>
+
+
+<!-- Product Cards --!>
+<div class="w-100 mt-4 d-flex flex-wrap">
+	@foreach (var product in Model.Products)
+	{
+										<div class="card mx-2 mb-4" style="width:16rem;">
+			@if (string.IsNullOrEmpty(product.Image))
+			{
+								<img style="width:100%" src="/images/blank.jpg" class="card-img-top" alt="...">
+			}
+			else
+			{
+								<img style="width:100%" src="/images/@product.Image" class="card-img-top" alt="...">
+			}
+
+					<div class="card-body">
+												<h3 class="card-title">
+													$@product.Price <br>
+													<small class="text-body-secondary"> @product.ProductName </small>
+												</h3>
+													<p class="card-text">@product.BriefDescription</p>
+													<p class="card-text"><small>Brand: @product.Brand</small></p>
+												<button type="button" onclick="add(@product.Id)" class="btn btn-outline-warning">Add to Cart</button>
+									  </div>
+									</div>
+	}
+</div>
+
+
+@section Scripts{
+
+		
+		<!-- Testing page responsiveness -->
+		<script>
+				//alert("hello"); // this is just to test if the script is working; it worksskksksks
+				async function add(productId) {
+					try {
+						//console.log('hellooo')
+						var response = await fetch(`/Cart/AddItem?productId=${productId}`);
+						console.log(response)
+					if (response.status == 200) {
+						var result = await response.json();
+						console.log(result);
+						var cartCountEl = document.getElementById("cartCount");
+						cartCountEl.innerHTML = result;
+					}
+				}
+				catch (err) {
+					console.log(err);
+				}
+				}
+		</script>
+
+		<!-- Bootstrap Bundle with Popper (includes Bootstrap JS) -->
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+		
+		<!-- Script to sanitize and validate input before submitting the form -->
+		<script>
+			document.getElementById('sterm').addEventListener('input', function () {
+				const input = this.value;
+				const sanitizedInput = sanitizeInput(input);
+				this.value = sanitizedInput;
+			});
+
+			function sanitizeInput(input) {
+				// Remove HTML tags
+				const sanitizedInput = input.replace(/<\/?[^>]+(>|$)/g, "");
+
+				// Remove special characters associated with injections and attacks
+				const sanitizedInputNoSpecialChars = sanitizedInput.replace(/[;<>'"()]/g, '');
+
+				return sanitizedInputNoSpecialChars;
+			}
+		</script>
+		
+		<!-- Script to manually switch carousel slides at regular intervals -->
+		<script>
+			// Get the carousel element
+			const carouselElement = document.getElementById('carouselExampleDark');
+
+			// Initialize the current slide index
+			let currentSlideIndex = 0;
+
+			// Function to switch to the next carousel slide
+			function switchNextSlide() {
+				const slides = carouselElement.querySelectorAll('.carousel-item');
+				slides[currentSlideIndex].classList.remove('active');
+				currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+				slides[currentSlideIndex].classList.add('active');
+			}
+
+			// Start the interval to switch slides every 5000ms (5 seconds)
+			setInterval(switchNextSlide, 5000);
+		</script>
+}
+
+			<style>
+	/* Add sliding effect for carousel transition */
+	.carousel-item {
+		transition: transform 0.5s ease-in-out;
+	}
+
+		.carousel-item:not(.active) {
+			transform: translateX(100%);
+		}
+
+		.carousel-item.active {
+			transform: translateX(0);
+		}
+</style>
